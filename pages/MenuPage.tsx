@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebase'; // Connect to the database
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import MenuGrid from '../components/MenuGrid'; // Re-use your existing grid
+import { db } from '../firebase';
+import MenuGrid from '../components/MenuGrid';
 import { Loader2 } from 'lucide-react';
 
 export default function MenuPage() {
@@ -11,21 +9,16 @@ export default function MenuPage() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('All');
 
-  // Categories match what you have in Admin
   const categories = ['All', 'Specials', 'Soups', 'Proteins', 'Sides', 'Drinks', 'Swallow'];
 
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        // Go to the "menu" collection in the database
         const querySnapshot = await getDocs(collection(db, "menu"));
-        
-        // Convert the database data into a list
         const items = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         }));
-        
         setMenuItems(items);
       } catch (error) {
         console.error("Error fetching menu:", error);
@@ -37,16 +30,12 @@ export default function MenuPage() {
     fetchMenu();
   }, []);
 
-  // Filter items based on the category button clicked
   const filteredItems = activeCategory === 'All' 
     ? menuItems 
     : menuItems.filter(item => item.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
-      
-      <main className="flex-grow container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Our Menu</h1>
 
         {/* Category Buttons */}
@@ -84,9 +73,6 @@ export default function MenuPage() {
             )}
           </>
         )}
-      </main>
-
-      <Footer />
     </div>
   );
 }
