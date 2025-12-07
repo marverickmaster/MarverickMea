@@ -57,19 +57,17 @@ export default function Admin() {
   };
 
   // Handle Adding New Item
+// REPLACE THE OLD handleAddItem WITH THIS ONE
   const handleAddItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!imageFile) {
-      alert("Please select an image!");
-      return;
-    }
+    // REMOVED THE IMAGE CHECK
+    // if (!imageFile) { alert("Please select an image!"); return; }
     
     setIsSubmitting(true);
     try {
-      // 1. Upload Image to Storage
-      const imageRef = ref(storage, `food-images/${imageFile.name + Date.now()}`);
-      await uploadBytes(imageRef, imageFile);
-      const imageUrl = await getDownloadURL(imageRef);
+      // SKIP IMAGE UPLOAD FOR NOW
+      // Use a placeholder image or the file name if we can't upload
+      const imageUrl = "https://placehold.co/400x300?text=No+Image"; 
 
       // 2. Save Item to Database (Firestore)
       await addDoc(collection(db, "menu"), {
@@ -77,7 +75,7 @@ export default function Admin() {
         price: Number(newItem.price),
         description: newItem.description,
         category: newItem.category,
-        imageUrl: imageUrl, // The real cloud link
+        imageUrl: imageUrl, // Using the fake link
         isAvailable: true,
         createdAt: new Date()
       });
@@ -85,11 +83,11 @@ export default function Admin() {
       // 3. Reset Form
       setNewItem({ name: '', price: '', description: '', category: 'Specials' });
       setImageFile(null);
-      alert("Item added successfully!");
-      fetchItems(); // Refresh list
+      alert("Item added successfully (Text Only)!");
+      fetchItems(); 
     } catch (err) {
-      console.error(err);
-      alert("Error adding item. Try again.");
+      console.error(err); // <--- This will show us the real error in Console
+      alert("Error adding item. Check the Console (F12) for details.");
     } finally {
       setIsSubmitting(false);
     }
